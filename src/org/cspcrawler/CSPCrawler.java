@@ -1,6 +1,7 @@
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+package org.cspcrawler;
+import java.io.IOException;
+import java.net.UnknownHostException;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -8,8 +9,17 @@ import edu.uci.ics.crawler4j.crawler.*;
 import edu.uci.ics.crawler4j.parser.*;
 import edu.uci.ics.crawler4j.url.*;
 
-public class MyCrawler extends WebCrawler{
-	private static int count;
+import org.cspapplier.*;
+
+public class CSPCrawler extends WebCrawler{
+	private PageJsonGenerator jsonGen; //analyze and transform HTML to JSON, it uses the JsonAnalyzer class
+	private JsonHandler jsonHandler; // the handler for the JSON
+
+	public CSPCrawler(){
+		super();
+		jsonHandler = new JsonHandler();
+	}
+
 	private final static Pattern FILTERS = Pattern.compile(".*(\\.(css|js|bmp|gif|jpe?g" 
             + "|png|tiff?|mid|mp2|mp3|mp4"
             + "|wav|avi|mov|mpeg|ram|m4v|pdf" 
@@ -23,7 +33,7 @@ public class MyCrawler extends WebCrawler{
 	@Override
 	public boolean shouldVisit(WebURL url) {
 		String href = url.getURL().toLowerCase();
-		return !FILTERS.matcher(href).matches(); // "herf.startWith("the another constrain");
+		return !FILTERS.matcher(href).matches();
 	}
 
 /**
@@ -41,14 +51,18 @@ public class MyCrawler extends WebCrawler{
 			String html = htmlParseData.getHtml();
 
 			try {
-				String fileName = Integer.toString(count);
-				PrintWriter out = new PrintWriter(fileName+ ".html", "UTF-8");
-				out.println(html);
-				count++;
-				out.close();
-			} catch (FileNotFoundException e) {
+				//pass the strings to page generator, to get the strings of hashURL and PageJson
+				jsonGen = new PageJsonGenerator(html, url);
+				String hashURL = jsonGen.getHashURL();
+				String pageJson = jsonGen.getPageJson();
+				
+				//pass the strings to handler
+				jsonHandler.handle(url, hashURL, pageJson);
+
+			} catch (NoSuchAlgorithmException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} catch (UnsupportedEncodingException e) {
+			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -57,6 +71,7 @@ public class MyCrawler extends WebCrawler{
 			System.out.println("Text length: " + text.length());
 			System.out.println("Html length: " + html.length());
 			System.out.println("Number of outgoing links: " + links.size());
+			System.out.println();
 		}
 	}
 };

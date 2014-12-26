@@ -1,0 +1,11 @@
+# Ignore .class files
+*.classpath
+*.project
+
+.DS_Store
+
+#eclipse project file
+.project
+
+# class file
+bin/

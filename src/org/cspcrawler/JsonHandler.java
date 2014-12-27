@@ -48,9 +48,9 @@ public class JsonHandler {
 			else{
 				System.out.println("the record existed, analyzing...");
 				BasicDBObject record = (BasicDBObject)cursor.next();
-				
+
 				//only get the content portion for comparison
-				String recordContent = record.get("content").toString();
+				BasicDBObject recordC = (BasicDBObject) record.get("content");
 
 				//reformat the the pageJson to mimic the record in the db
 				BasicDBObject pageJsonFormat = (BasicDBObject)JSON.parse(pageJson);
@@ -65,7 +65,7 @@ public class JsonHandler {
 				System.out.println(pageJsonS);
 				*/
 
-				compare(url, hashKey, pageJsonS, recordContent);
+				compare(url, hashKey, pageJsonS, recordC);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -75,22 +75,23 @@ public class JsonHandler {
 		}
 	}
 	
-	public void compare(String url, String hashKey, String pageJson, String record) throws IOException{
+	public void compare(String url, String hashKey, String pageJson, BasicDBObject recordC) throws IOException{
 		HashMapInJson newJson = JsonAnalyzer.jsonFromString(pageJson);
-		HashMapInJson oldJson = JsonAnalyzer.jsonFromString(record);
+		HashMapInJson oldJson = JsonAnalyzer.jsonFromString(recordC.toString());
 		analyzer = new JsonAnalyzer(newJson, oldJson);
 		
-		//if found any difference
-        if (!analyzer.isEmpty()) {
+		//if found any blacklist 
+		boolean jsListIsEmpty = analyzer.getJsComparisonResult().getBlackList().isEmpty();
+		boolean cssListIsEmpty = analyzer.getCssComparisonResult().getBlackList().isEmpty();
+        if (!jsListIsEmpty || !cssListIsEmpty) {
         	//insert the JSON into pageJson first
-        	System.out.println("found differences, saving to database.");
-				System.out.println();
+        	System.out.println("found black list, saving to database.");
+        	/*
 				System.out.println("*****************record content********************************************");
-				System.out.println(record);
-				System.out.println();
+				System.out.println(recordC.toString());
 				System.out.println("******************page Json************************************************");
 				System.out.println(pageJson);
-				System.out.println();
+			*/
 
 			//get the comparison result
         	ComparisonResult cssResult = analyzer.getCssComparisonResult();
@@ -103,18 +104,27 @@ public class JsonHandler {
         	//parse it to JSON object
         	Gson gson = new Gson();
         	String cssBlackJson = gson.toJson(cssBlack);
+        	//System.out.println(cssBlackJson);
+
          	String cssWarningJson = gson.toJson(cssWarning);
+        	//System.out.println(cssWarningJson);
+
         	String jsBlackJson = gson.toJson(jsBlack);
+        	//System.out.println(jsBlackJson);
+
 			String jsWarningJson = gson.toJson(jsWarning);
+        	//System.out.println(jsWarningJson);
 
  			if(Main.sampleMode) {
 			//update to pageJson collection
- 				System.out.println("update page json collection");
-				dbDriver.pageJson.update(hashKey, cssBlackJson, cssWarningJson, jsBlackJson, jsWarningJson);
+ 				System.out.println("update page json collection...");
+				dbDriver.pageJson.update(recordC, hashKey, cssBlackJson, cssWarningJson, jsBlackJson, jsWarningJson);
+ 				dbDriver.diffURL.insert(hashKey, url);
+ 				//dbDriver.diffLog.insert(hashKey, cssBlackJson, cssWarningJson, jsBlackJson, jsWarningJson);
  			}
  			
  			else{
- 				//update to diffURL collection
+ 				//update to diffURL collection, increase count for the black url
  				dbDriver.diffURL.insert(hashKey, url);
 
  				//save to diffLog collection 
@@ -124,7 +134,7 @@ public class JsonHandler {
         }
         //else, do nothing NOTE: here don't insert the file into the pageJson collection
         else{
-        	System.out.println("no differences is found, so far so good.");
+        	System.out.println("no blacklist is found, so far so good. The warning list is ignored");
         }
 
 	}

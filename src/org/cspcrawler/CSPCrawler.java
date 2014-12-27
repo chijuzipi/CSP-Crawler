@@ -1,6 +1,6 @@
 package org.cspcrawler;
-import java.io.IOException;
-import java.net.UnknownHostException;
+import java.io.*;
+//import java.io.PrintWriter;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -13,12 +13,15 @@ import org.cspapplier.*;
 
 public class CSPCrawler extends WebCrawler{
 	private PageJsonGenerator jsonGen; //analyze and transform HTML to JSON, it uses the JsonAnalyzer class
-	private JsonHandler jsonHandler; // the handler for the JSON
+	private JsonHandler jsonHandler = new JsonHandler(); // the handler for the JSON
 
+
+	/*
 	public CSPCrawler(){
 		super();
 		jsonHandler = new JsonHandler();
 	}
+	*/
 
 	private final static Pattern FILTERS = Pattern.compile(".*(\\.(css|js|bmp|gif|jpe?g" 
             + "|png|tiff?|mid|mp2|mp3|mp4"
@@ -59,11 +62,19 @@ public class CSPCrawler extends WebCrawler{
 				//pass the strings to handler
 				jsonHandler.handle(url, hashURL, pageJson);
 
+				/* to output html to loca, for analysis purpose
+				String fileName = Integer.toString(1);
+				PrintWriter out = new PrintWriter(fileName+ ".html", "UTF-8");
+				out.println(html);
+				out.close();
+				*/
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
 			} catch (NoSuchAlgorithmException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 

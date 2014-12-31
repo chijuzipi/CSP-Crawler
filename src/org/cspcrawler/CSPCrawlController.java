@@ -6,13 +6,15 @@ import edu.uci.ics.crawler4j.crawler.*;
 import java.util.TimerTask;
 import java.util.Date;
 
-public class Controller extends TimerTask{
+//import org.eclipse.wst.jsdt.core.dom.ASTParser;
+
+public class CSPCrawlController extends TimerTask{
 	private CrawlController controller;
 	private CrawlConfig config;
 	private int numberOfCrawlers;
 	Date now;
 
-	public Controller(int numOfCrawler, int depth, int maxPageNum, String seed) throws Exception{
+	public CSPCrawlController(int numOfCrawler, int depth, int maxPageNum, String seed) throws Exception{
 		    String crawlStorageFolder = "/data/crawl/root";
 		    numberOfCrawlers = numOfCrawler;
 		    

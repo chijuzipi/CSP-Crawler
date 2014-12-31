@@ -13,6 +13,8 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBCursor;
 import com.mongodb.util.JSON;
 
+//import org.eclipse.wst.jsdt.core.dom.ASTParser;
+
 public class JsonHandler {
 	private CSPMongoDriver dbDriver;
 	private JsonAnalyzer analyzer;
@@ -41,6 +43,7 @@ public class JsonHandler {
 			if(cursor.count() == 0){
 				System.out.println("the url does not exist, db updated");
 				dbDriver.pageJson.insert(hashKey, pageJson);
+				dbDriver.DPage.insert(hashKey, url);
 				return;
 			}
 			
@@ -55,15 +58,6 @@ public class JsonHandler {
 				//reformat the the pageJson to mimic the record in the db
 				BasicDBObject pageJsonFormat = (BasicDBObject)JSON.parse(pageJson);
 				String pageJsonS = pageJsonFormat.toString();
-
-				/* to see a detailed difference between the above 3 states
-				System.out.println("*****************record string********************************************");
-				System.out.println(recordString);
-				System.out.println("*****************record content********************************************");
-				System.out.println(recordContent);
-				System.out.println("******************page Json**********************************************");
-				System.out.println(pageJsonS);
-				*/
 
 				compare(url, hashKey, pageJsonS, recordC);
 			}
@@ -120,6 +114,7 @@ public class JsonHandler {
  				System.out.println("update page json collection...");
 				dbDriver.pageJson.update(recordC, hashKey, cssBlackJson, cssWarningJson, jsBlackJson, jsWarningJson);
  				dbDriver.diffURL.insert(hashKey, url);
+ 				dbDriver.DPage.update(hashKey);
  				//dbDriver.diffLog.insert(hashKey, cssBlackJson, cssWarningJson, jsBlackJson, jsWarningJson);
  			}
  			
@@ -134,7 +129,9 @@ public class JsonHandler {
         }
         //else, do nothing NOTE: here don't insert the file into the pageJson collection
         else{
+        	dbDriver.DPage.remove(hashKey);
         	System.out.println("no blacklist is found, so far so good. The warning list is ignored");
+        	System.out.println("DPage item removed");
         }
 
 	}

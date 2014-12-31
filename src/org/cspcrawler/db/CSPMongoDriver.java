@@ -12,6 +12,7 @@ public class CSPMongoDriver {
 	public PageJsonColl pageJson;
 	public DiffLogColl diffLog; 
 	public DiffURLColl diffURL;
+	public DynamicPageColl DPage;
 
 	public CSPMongoDriver() throws UnknownHostException{
         MongoClient mongoClient = new MongoClient( "localhost", 27017);
@@ -25,6 +26,9 @@ public class CSPMongoDriver {
 
         //#3 collection, store difference url and the differnce count
         diffURL = new DiffURLColl(db);
+
+        //#4 collection, store the dynamic page url and hashkey 
+        DPage = new DynamicPageColl(db);
 	}
 
 	public DBCollection getCollection(int dbIndex){

@@ -5,9 +5,4 @@ public abstract class CSPCollection {
 	public CSPCollection(){
 	}
 
-	/*
-	public abstract void insert();
-	public abstract void update();
-	public abstract void query();
-	*/
 }

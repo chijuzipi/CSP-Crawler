@@ -24,7 +24,7 @@ public class Main {
 			time.schedule(launcher, 0, 100000);
 			*/
 
-			Controller launcher = new Controller(crawlerNum, depth, maxPageNum, seed);
+			CSPCrawlController launcher = new CSPCrawlController(crawlerNum, depth, maxPageNum, seed);
 			launcher.run();
 		} catch (Exception e) {
 			e.printStackTrace();

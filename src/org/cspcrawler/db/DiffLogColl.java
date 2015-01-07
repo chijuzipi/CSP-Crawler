@@ -15,7 +15,7 @@ public class DiffLogColl extends CSPCollection{
 	}
 
 	//insert to diffLog collection
-	public void insert(String key, String cssBlack, String cssWarn, String jsBlack, String jsWarn){	
+	public void insert(String key, String url, String cssBlack, String cssWarn, String jsBlack, String jsWarn){	
 		BasicDBObject doc1 = (BasicDBObject)JSON.parse(cssBlack);
 		//BasicDBObject doc2 = (BasicDBObject)JSON.parse(cssWarn);
 		BasicDBObject doc3 = (BasicDBObject)JSON.parse(jsBlack);
@@ -23,7 +23,10 @@ public class DiffLogColl extends CSPCollection{
 		
 		String date = CSPMongoDriver.getDate();
 		
+		System.out.println(doc3);
+		
 		BasicDBObject docInsert = new BasicDBObject("URLHash", key).
+									append("url", url).
 									append("cssBlackList", doc1).
 									append("jsBlackList", doc3).
 									append("date", date);

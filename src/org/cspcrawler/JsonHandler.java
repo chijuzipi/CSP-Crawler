@@ -27,7 +27,7 @@ public class JsonHandler {
 		}
 	}
 
-	public void handle(String url, String hashKey, String pageJson){
+	public void handle(String html, String url, String hashKey, String pageJson){
 		
 		//first query if the hashKey exist in the database
 		BasicDBObject query = new BasicDBObject("URLHash", hashKey);
@@ -43,7 +43,7 @@ public class JsonHandler {
 			if(cursor.count() == 0){
 				System.out.println("the url does not exist, db updated");
 				dbDriver.pageJson.insert(hashKey, pageJson);
-				dbDriver.DPage.insert(hashKey, url);
+				//dbDriver.DPage.insert(hashKey, url);
 				return;
 			}
 			
@@ -114,8 +114,8 @@ public class JsonHandler {
  				System.out.println("update page json collection...");
 				dbDriver.pageJson.update(recordC, hashKey, cssBlackJson, cssWarningJson, jsBlackJson, jsWarningJson);
  				dbDriver.diffURL.insert(hashKey, url);
- 				dbDriver.DPage.update(hashKey);
- 				//dbDriver.diffLog.insert(hashKey, cssBlackJson, cssWarningJson, jsBlackJson, jsWarningJson);
+ 				//dbDriver.DPage.update(hashKey);
+ 				dbDriver.diffLog.insert(hashKey, url, cssBlackJson, cssWarningJson, jsBlackJson, jsWarningJson);
  			}
  			
  			else{
@@ -123,15 +123,15 @@ public class JsonHandler {
  				dbDriver.diffURL.insert(hashKey, url);
 
  				//save to diffLog collection 
- 				dbDriver.diffLog.insert(hashKey, cssBlackJson, cssWarningJson, jsBlackJson, jsWarningJson);
+ 				//dbDriver.diffLog.insert(hashKey, cssBlackJson, cssWarningJson, jsBlackJson, jsWarningJson);
  			}
         	
         }
         //else, do nothing NOTE: here don't insert the file into the pageJson collection
         else{
-        	dbDriver.DPage.remove(hashKey);
+        	//dbDriver.DPage.remove(hashKey);
         	System.out.println("no blacklist is found, so far so good. The warning list is ignored");
-        	System.out.println("DPage item removed");
+        	//System.out.println("DPage item removed");
         }
 
 	}

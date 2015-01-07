@@ -60,7 +60,7 @@ public class CSPCrawler extends WebCrawler{
 				String pageJson = jsonGen.getPageJson();
 				
 				//pass the strings to handler
-				jsonHandler.handle(url, hashURL, pageJson);
+				jsonHandler.handle(html, url, hashURL, pageJson);
 
 				/* to output html to loca, for analysis purpose
 				String fileName = Integer.toString(1);

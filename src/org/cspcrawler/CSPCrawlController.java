@@ -34,14 +34,36 @@ public class CSPCrawlController extends TimerTask{
 		    controller = new CrawlController(config, pageFetcher, robotstxtServer);
 
 		    controller.addSeed(seed);
-		    //controller.addSeed("http://www.cnn.com");
-		    //controller.addSeed("http://www.google.com");
-		    //controller.addSeed("http://chijuzipi.github.io/");
-		    //controller.addSeed("http://www.amazon.com");
-		    //controller.addSeed("http://osr.northwestern.edu/");
-		    //controller.addSeed("http://www.northwestern.edu/");
+
 	  }
-	
+
+	public CSPCrawlController() throws Exception{
+		    String crawlStorageFolder = "/data/crawl/root";
+		    numberOfCrawlers = 5;
+		    
+		    
+		    config = new CrawlConfig();
+		    config.setCrawlStorageFolder(crawlStorageFolder);
+		    config.setMaxDepthOfCrawling(1);
+
+		    config.setMaxPagesToFetch(3000);
+		    config.setIncludeHttpsPages(true);
+
+		    System.out.println(config.toString());
+
+		    PageFetcher pageFetcher = new PageFetcher(config);
+		    RobotstxtConfig robotstxtConfig = new RobotstxtConfig();
+		    RobotstxtServer robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetcher);
+		    controller = new CrawlController(config, pageFetcher, robotstxtServer);
+
+		    controller.addSeed("http://www.yahoo.com");
+		    controller.addSeed("http://www.amazon.com");
+		    controller.addSeed("http://www.google.com");
+		    controller.addSeed("http://www.wikipedia.org");
+		    controller.addSeed("http://www.cnn.com");
+		    controller.addSeed("http://www.northwestern.edu/");
+	}
+
 	public void run(){
 		now = new Date();
 		System.out.println("Time is :" + now);
